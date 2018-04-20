@@ -44,21 +44,21 @@ class Perceptron():
             print("Processing Data")
             if current_truthval != truthval:
                 errors += 1
-        if self.errors < self.evalSol(self.least_errors, self.best_weights):
+        if self.errors < self.best_weights:
             self.least_errors = self.errors
             self.best_weights = weights
         self.shuffleSet(self.data)
         return self.least_errors, self.best_weights
 
 
-    def evalSol(self, least_errors, weights):
+    def evalSol(self):
         self.best_weights = 0, 0, 0
         least_errors = self.errors
         return least_errors
 
 
     def printResults(self):
-        print(f"Best Weights: ", {self.best_weights})
+        print(f"Best Weights: ", self.best_weights)
 
     def tableInfo(self):
         for row in self.data:
