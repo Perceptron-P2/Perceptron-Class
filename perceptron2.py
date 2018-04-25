@@ -10,11 +10,10 @@ class Perceptron:
         self.petalWidth = []
         self.species = []
         self.ord = []
-        self.truth = [] 
-        self.coeff = []
-        self.c_coeff = 0 #tuple
-        self.error = 0
+        self.truth = []  
+        self.coeff = 0 #tuple 
         self.occurrence = 0
+        self.error = 0
         
 
 
@@ -60,103 +59,88 @@ class Perceptron:
         random.shuffle(self.ord)
         sw = []
         pl = []
+        pw = []
+        th = []
         species = []
         for i in self.ord:
-            sw.append(self.petalWidth[i])
-            pl.append(self.petalLengh[i])
+            sw.append(self.sepalWidth[i])
+            pl.append(self.petalWidth[i])
+            pw.append(self.petalLengh[i])
             species.append(self.species[i])
+            th.append(self.truth[i])
 
-        self.petalWidth = sw[:]
-        self.petalLengh = pl[:]
+        self.sepalWidth = sw[:]
+        self.petalWidth = pl[:]
+        self.petalLengh = pw[:]
+        self.truth = th[:]
         self.species = species[:]
+
+##        print(len(self.sepalWidth))
+##        print("\n")
+##        print(len(self.petalLengh))
+##        print("\n")
+##        print(len(self.truth))
+##        print("\n")
         
 
-
-    def evalSol(self):
-
-        #Empty dictionnary
-        coeffDic = {}
-
-        #Save the coefficients as keys in the dictionnary and their values initialized to 0
-        for i in self.coeff:
-            coeffDic[i] = 0
-
-        #Save the occurence of each coefficients
-        for i in self.coeff:
-            if i in coeffDic:
-                coeffDic[i] += 1
-
-        #Save the occurences in the list myOcc in descendig order
-        myOcc = sorted(coeffDic.values(), reverse=True)
-
-        #Retrieve the biggest occurence
-        maxError = myOcc[0]
-
-        #Get the c-coefficients that appear mostly
-        for coeff, occ in coeffDic.items():
-            if maxError == occ:
-                self.c_coeff = coeff 
-                self.occurrence = occ
-
-        #number of error
-        self.error = len(self.petalWidth) - self.occurrence       
-        
-    
+     
         
     def processData(self): 
 
         c1 = 0
         c2 = 0
         c3 = 0
+        c4 = 0
     
         finished = False
         while not finished:
 
-            self.model = []
-            self.coeff = []
-
+            self._shuffleSet()
+            
+            self.error = 0
             size = len(self.petalWidth)  
             for i in range(size): 
-                sw = self.petalWidth[i]
+                sw = self.sepalWidth[i]
                 pl = self.petalLengh[i]
-                #pw = self.petalWidth[i]
+                pw = self.petalWidth[i]
                 truth = self.truth[i]
             
- 
-            
-                model = (c1 * 1) + (c2 * sw) + (c3 * pl) 
+                model = (c1 * 1) + (c2 * sw) + (c3 * pl)
+##                model = (c1 * 1) + (c2 * sw) + (c3 * pl) + (c4 * pw)
                     
                 if truth > 0 and model < 0:
                     c1 = c1 + 1
                     c2 = c2 + sw
                     c3 = c3 + pl
+##                   c4 = c4 + pw
+                    self.error += 1
                     
                 if truth < 0 and model >= 0:
                     c1 = c1 - 1
                     c2 = c2 - sw
                     c3 = c3 - pl
-
-                self.model.append(model)
-                self.coeff.append((c1, c2, c3))
-
-                self.evalSol()
+##                    c4 = c4 - pw
+                    self.error += 1
+         `          self.coeff = (c1, c2, c3
+##                    self.coeff = (c1, c2, c3, c4)
                 
-                if self.error <= 10:
-                    finished = True
-                    
-                else:
-                    self._shuffleSet()
-
-
-            print(" C1   |   C2   |   C3   |  occ  |  errors")
-            print("%.2f  |  %.2f  |  %.2f  |  %d   |    %d\n"%(self.c_coeff[0], self.c_coeff[1], self.c_coeff[2], self.occurrence, self.error))
-                    
-
+                
+            if self.error <= 5:
+                finished = True
+            
+             
 
     def printResults(self):  
             
-        print(" C1   |   C2   |   C3   |  occ  |  errors")
-        print("%.2f  |  %.2f  |  %.2f  |  %d   |    %d\n"%(self.c_coeff[0], self.c_coeff[1], self.c_coeff[2], self.occurrence, self.error))
+        
+        #print("\n\n Petal Lengh VS Petal Width\n")
+        #print("\n\n Petal Width VS Petal Lengh\n")
+        #print("\n\n Sepal Width VS Petal Lengh\n")
+        print("\n\n Sepal Width VS Petal Lengh VS Petal Width\n")
+        print(" C1     |   C2    |   C3     |  errors")
+        print("%.2f  |  %.2f  |  %.2f  |    %d\n"%(self.coeff[0], self.coeff[1], self.coeff[2], self.error))
+##        print(" C1     |   C2    |   C3     |   C4     |  errors")
+##        print("%.2f  |  %.2f  |  %.2f  |  %.2f  |    %d\n"%(self.coeff[0], self.coeff[1], self.coeff[2], self.coeff[3], self.error))
             
 
 def main():
